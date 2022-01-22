@@ -9,27 +9,35 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        json_file = f'{settings.BASE_DIR}/../imdb-task.json'
+        try :
+            json_file = f'{settings.BASE_DIR}/../imdb-task.json'
 
-        with open(json_file) as file:
-            moviesData = file.read()
-            moviesList = json.loads(moviesData)
+            with open(json_file) as file:
+                moviesData = file.read()
+                moviesList = json.loads(moviesData)
 
-            # creating generators for fast and memory efficient processing
-            moviesGenerator = (movie for movie in moviesList)
-            singleMovie = {}
-            for movieObj in moviesGenerator:
-                singleMovie['popularity'] = movieObj.get('99popularity')
-                singleMovie['director'] = movieObj.get('director')
-                singleMovie['imdb_score'] = movieObj.get('imdb_score')
-                singleMovie['name'] = movieObj.get('name')
+                # creating generators for fast and memory efficient processing
+                moviesGenerator = (movie for movie in moviesList)
+                singleMovie = {}
+                for movieObj in moviesGenerator:
+                    singleMovie['popularity'] = movieObj.get('99popularity')
+                    singleMovie['director'] = movieObj.get('director')
+                    singleMovie['imdb_score'] = movieObj.get('imdb_score')
+                    singleMovie['name'] = movieObj.get('name')
 
-                movie, created = Movie.objects.get_or_create(**singleMovie)
-                genres = movieObj.get('genre')
+                    movie, created = Movie.objects.get_or_create(**singleMovie)
+                    genres = movieObj.get('genre')
 
-                # creating and linking genres to movies
-                for genre in genres:
-                    name = genre.strip()
-                    genre, created = Genre.objects.get_or_create(name=name)
-                    movie.genre.add(genre)
-                movie.save()
+                    # creating and linking genres to movies
+                    for genre in genres:
+                        name = genre.strip()
+                        genre, created = Genre.objects.get_or_create(name=name)
+                        movie.genre.add(genre)
+                        movie.save()
+        
+                self.stdout.write(self.style.SUCCESS('Successfully inserted the data in database'))
+                return
+
+        except IOError as e:
+            self.stdout.write(self.style.ERROR(f'File not found. {e}'))
+            return
