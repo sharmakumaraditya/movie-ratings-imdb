@@ -1,0 +1,14 @@
+Django==3.0.7
+django-filter
+djangorestframework==3.11
+psycopg2==2.8.5
+ipython
+dj-database-url
+django-heroku
+whitenoise
+six
+gunicorn
+autopep8
+flake8
+autoflake
+pylint
