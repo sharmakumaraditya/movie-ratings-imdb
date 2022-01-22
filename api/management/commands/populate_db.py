@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         try :
-            json_file = f'{settings.BASE_DIR}/../imdb-task.json'
+            json_file = f'{settings.BASE_DIR}/imdb-task.json'
 
             with open(json_file) as file:
                 moviesData = file.read()
